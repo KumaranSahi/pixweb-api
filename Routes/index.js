@@ -20,5 +20,6 @@ router.post('/users/:id/update-password',userController.changePassword)
 router.get('/playlists/:id',playlistController.sendAllPlaylists)
 router.post('/playlists/:id',playlistController.addNewPlaylist)
 router.put('/playlists/:playlistid/video/:videoid',playlistController.addVideoToPlaylist)
+router.delete('/playlists/:playlistid/video/:videoid',playlistController.removeVideoFromPlaylist)
 
 module.exports=router;

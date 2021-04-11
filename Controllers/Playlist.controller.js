@@ -81,3 +81,28 @@ module.exports.addVideoToPlaylist=async (req,res)=>{
         message:"Bad video or playlist id"
     })
 }
+
+module.exports.removeVideoFromPlaylist=async (req,res)=>{
+    const {playlistid,videoid}=req.params;
+    if(await playlistdb.findById(playlistid)&&await videodb.findById(videoid))
+    {
+        const playlist=await playlistdb.findByIdAndUpdate(playlistid,{$pull:{videos:videoid}});
+        const newPlaylist=await playlistdb.findById(playlistid)
+        if(playlist){
+            return res.status(201).json({
+                ok:true,
+                data:newPlaylist,
+                message:"video removed successfully"
+            })
+        }else{
+            return res.status(503).json({
+                ok:false,
+                message:"internal error please try again later"
+            })
+        }
+    }
+    return res.status(400).json({
+        ok:false,
+        message:"Bad video or playlist id"
+    })
+}
