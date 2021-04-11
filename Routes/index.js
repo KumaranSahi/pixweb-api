@@ -12,5 +12,6 @@ router.get('/videos/:id',videosController.sendSelectedVideo)
 //User routes
 
 router.post('/users',userController.addUser)
+router.post('/users/:id/update-password',userController.changePassword)
 
 module.exports=router;

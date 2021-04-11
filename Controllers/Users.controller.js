@@ -35,3 +35,26 @@ module.exports.addUser=async (req,res)=>{
         })
     }
 }
+
+module.exports.changePassword=async (req,res)=>{
+    const {id}=req.params;
+    const {password,confirmPassword}=req.body;
+    if(!(password)||!(confirmPassword)||(password!==confirmPassword)){
+        return res.status(405).json({
+            ok:false,
+            message:"Passwords are invalid"
+        })
+    }
+    const data=await usersdb.findById(id).update({password:password});
+    if(data){
+        return res.status(200).json({
+            ok:true,
+            message:"Password Updated Successfully"
+        })
+    }else{
+        return res.status(503).json({
+            ok:false,
+            message:"Internal error please try again later"
+        })
+    }
+}
