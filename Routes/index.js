@@ -25,6 +25,7 @@ router.delete('/playlists/:playlistid',playlistController.deletePlaylist)
 
 //History routes
 
+router.get('/histories/:id',videosController.getUserHistory)
 router.put('/histories/:videoid/users/:id',videosController.addToHistory)
 
 module.exports=router;

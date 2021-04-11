@@ -53,3 +53,29 @@ module.exports.addToHistory=async (req,res)=>{
         message:"Bad video id or user id"
     })
 }
+
+module.exports.getUserHistory=async (req,res)=>{
+    const {id}=req.params
+    const user=await usersdb.findById(id);
+    if(user){
+        const {history}=await user.execPopulate('history')
+        if(history){
+            return res.status(200).json({
+                ok:true,
+                data:history,
+                message:"History sent successfully"
+            })
+        }else{
+            return res.status(404).json({
+                ok:false,
+                message:"Data not found"
+            })
+        }
+    }
+
+    return res.status(400).json({
+        ok:false,
+        message:"Bad user id"
+    })
+    
+}
