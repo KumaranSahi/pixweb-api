@@ -10,6 +10,6 @@ const PORT=8000;
 app.use(cors())
 app.use(express.json())
 
-app.use("/",router)
+app.use("/api",router)
 
 app.listen(PORT,()=>console.log("Server running on port "+PORT))
