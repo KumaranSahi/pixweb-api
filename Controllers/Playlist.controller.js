@@ -6,10 +6,11 @@ module.exports.sendAllPlaylists=async (req,res)=>{
     const {id}=req.params
     if(await userdb.findById(id)){
         const {playlists}=await (await userdb.findById(id)).execPopulate({path:'playlists',populate:({path:'videos'})});
+        const newPlaylists=playlists.filter(({active})=>active)
         if(playlists){
             return res.status(200).json({
                 ok:true,
-                data:playlists,
+                data:newPlaylists,
                 message:"Full playlist list sent successfully"
             })
         }else{
@@ -31,7 +32,8 @@ module.exports.addNewPlaylist=async (req,res)=>{
     if(name){
         const data=await playlistdb.create({
             name:name,
-            by:id
+            by:id,
+            active:true
         })
         const userReference=await userdb.findById(id);
         await userReference.playlists.push(data.id);
@@ -105,4 +107,30 @@ module.exports.removeVideoFromPlaylist=async (req,res)=>{
         ok:false,
         message:"Bad video or playlist id"
     })
+}
+
+module.exports.deletePlaylist=async (req,res)=>{
+    const {playlistid}=req.params;
+    const playlist=await playlistdb.findById(playlistid)
+    if(playlist)
+    {
+        const data=await playlist.update({active:false});
+        if(data){
+            return res.status(201).json({
+                ok:true,
+                data:data,
+                message:"playlist deleted successfully"
+            })
+        }else{
+            return res.status(503).json({
+                ok:false,
+                message:"internal error please try again later"
+            })
+        }
+    }
+    return res.status(400).json({
+        ok:false,
+        message:"Bad playlist id"
+    })
+
 }
