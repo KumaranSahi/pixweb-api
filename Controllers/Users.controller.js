@@ -1,4 +1,4 @@
-const usersdb=require('../Models/user.model');
+const usersdb=require('../Models/users.model');
 
 module.exports.addUser=async (req,res)=>{
     const {name,email,password}=req.body;
@@ -25,7 +25,6 @@ module.exports.addUser=async (req,res)=>{
     if(data){
         return res.status(201).json({
             ok:true,
-            data:data,
             message:"User Added Successfully"
         })
     }else{

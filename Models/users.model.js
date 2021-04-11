@@ -14,6 +14,9 @@ const userSchema=new mongoose.Schema({
     },playlists:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'playlist'
+    }],history:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'video'
     }]
 },{timestamps:true})
 

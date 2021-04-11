@@ -1,11 +1,11 @@
-const playlistdb=require('../Models/playlists.model');
-const userdb=require('../Models/user.model')
-const videodb=require('../Models/videos.model')
+const playlistsdb=require('../Models/playlists.model');
+const usersdb=require('../Models/users.model')
+const videosdb=require('../Models/videos.model')
 
 module.exports.sendAllPlaylists=async (req,res)=>{
     const {id}=req.params
-    if(await userdb.findById(id)){
-        const {playlists}=await (await userdb.findById(id)).execPopulate({path:'playlists',populate:({path:'videos'})});
+    if(await usersdb.findById(id)){
+        const {playlists}=await (await usersdb.findById(id)).execPopulate({path:'playlists',populate:({path:'videos'})});
         const newPlaylists=playlists.filter(({active})=>active)
         if(playlists){
             return res.status(200).json({
@@ -30,12 +30,12 @@ module.exports.addNewPlaylist=async (req,res)=>{
     const {name}=req.body;
     const {id}=req.params;
     if(name){
-        const data=await playlistdb.create({
+        const data=await playlistsdb.create({
             name:name,
             by:id,
             active:true
         })
-        const userReference=await userdb.findById(id);
+        const userReference=await usersdb.findById(id);
         await userReference.playlists.push(data.id);
         userReference.save();
         if(data){
@@ -60,9 +60,9 @@ module.exports.addNewPlaylist=async (req,res)=>{
 
 module.exports.addVideoToPlaylist=async (req,res)=>{
     const {playlistid,videoid}=req.params;
-    if(await playlistdb.findById(playlistid)&&await videodb.findById(videoid))
+    if(await playlistsdb.findById(playlistid)&&await videosdb.findById(videoid))
     {
-        const playlist=await playlistdb.findById(playlistid);
+        const playlist=await playlistsdb.findById(playlistid);
         playlist.videos.push(videoid);
         playlist.save();
         if(playlist){
@@ -86,10 +86,10 @@ module.exports.addVideoToPlaylist=async (req,res)=>{
 
 module.exports.removeVideoFromPlaylist=async (req,res)=>{
     const {playlistid,videoid}=req.params;
-    if(await playlistdb.findById(playlistid)&&await videodb.findById(videoid))
+    if(await playlistsdb.findById(playlistid)&&await videosdb.findById(videoid))
     {
-        const playlist=await playlistdb.findByIdAndUpdate(playlistid,{$pull:{videos:videoid}});
-        const newPlaylist=await playlistdb.findById(playlistid)
+        const playlist=await playlistsdb.findByIdAndUpdate(playlistid,{$pull:{videos:videoid}});
+        const newPlaylist=await playlistsdb.findById(playlistid)
         if(playlist){
             return res.status(201).json({
                 ok:true,
@@ -111,7 +111,7 @@ module.exports.removeVideoFromPlaylist=async (req,res)=>{
 
 module.exports.deletePlaylist=async (req,res)=>{
     const {playlistid}=req.params;
-    const playlist=await playlistdb.findById(playlistid)
+    const playlist=await playlistsdb.findById(playlistid)
     if(playlist)
     {
         const data=await playlist.update({active:false});

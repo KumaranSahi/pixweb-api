@@ -1,5 +1,5 @@
 const videosdb=require('../Models/videos.model')
-
+const usersdb=require('../Models/users.model');
 
 module.exports.sendAllVideos=async (req,res)=>{
     const data=await videosdb.find();
@@ -32,4 +32,24 @@ module.exports.sendSelectedVideo=async (req,res)=>{
             message:"Data not found"
         })
     }
+}
+
+module.exports.addToHistory=async (req,res)=>{
+    const {videoid,id}=req.params;
+    const user=await usersdb.findById(id);
+    const video=await videosdb.findById(videoid)
+    if(video && user){
+        if(!user.history.includes(videoid))
+            await user.history.push(videoid)
+        user.save();
+        return res.status(201).json({
+            ok:true,
+            message:"Video added to history"
+        })
+    }
+
+    return res.status(400).json({
+        ok:false,
+        message:"Bad video id or user id"
+    })
 }
