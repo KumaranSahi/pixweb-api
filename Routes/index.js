@@ -21,7 +21,7 @@ router.get('/videos/:id',videosController.sendSelectedVideo)
 //User routes
 
 router.post('/users',userController.addUser)
-router.post('/users/:id/update-password',userController.changePassword)
+router.post('/users/:id/update-password',userCheck,userController.changePassword)
 
 //Playlist routes
 
