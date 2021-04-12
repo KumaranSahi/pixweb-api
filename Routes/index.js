@@ -5,7 +5,9 @@ const router=express.Router();
 
 const playlistCheck=require('../Middleware/playlistCheck');
 const videoCheck=require('../Middleware/videoCheck');
-const userCheck=require('../Middleware/userCheck')
+const userCheck=require('../Middleware/userCheck');
+const likeCheck=require('../Middleware/likeCheck');
+const noteCheck=require('../Middleware/noteCheck')
 
 //controllers
 
@@ -39,6 +41,8 @@ router.put('/histories/:videoid/users/:id',userCheck,videoCheck,videosController
 //likes and notes routes
 
 router.put('/likes/:videoid/users/:id',userCheck,videoCheck,videosController.addLikes)
+router.delete('/likes/:likeid',likeCheck,videosController.removeLike)
 router.post('/notes/:videoid/users/:id',userCheck,videoCheck,videosController.addNotes)
+router.delete('/notes/:noteid',noteCheck,videosController.removeNote)
 
 module.exports=router;
