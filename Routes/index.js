@@ -16,7 +16,7 @@ const playlistController=require('../Controllers/Playlist.controller');
 // Video routes
 
 router.get("/videos",videosController.sendAllVideos)
-router.get('/videos/:id',videosController.sendSelectedVideo)
+router.get('/videos/:videoid',videoCheck,videosController.sendSelectedVideo)
 
 //User routes
 
@@ -33,12 +33,12 @@ router.delete('/playlists/:playlistid',playlistCheck,playlistController.deletePl
 
 //History routes
 
-router.get('/histories/:id',videosController.getUserHistory)
-router.put('/histories/:videoid/users/:id',videosController.addToHistory)
+router.get('/histories/:id',userCheck,videosController.getUserHistory)
+router.put('/histories/:videoid/users/:id',userCheck,videoCheck,videosController.addToHistory)
 
 //likes and notes routes
 
-router.get('/likes/:videoid/users/:id')
-router.post('/notes/:videoid/users/:id')
+router.put('/likes/:videoid/users/:id',userCheck,videoCheck,videosController.addLikes)
+router.post('/notes/:videoid/users/:id',userCheck,videoCheck,videosController.addNotes)
 
 module.exports=router;

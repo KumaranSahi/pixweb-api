@@ -6,12 +6,10 @@ const noteSchema=new mongoose.Schema({
         required:true
     },by:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'user',
-        required:true
+        ref:'user'
     },video:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'video',
-        required:true
+        ref:'video'
     }
 },{
     timestamps:true
