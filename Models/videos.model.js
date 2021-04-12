@@ -22,7 +22,13 @@ const videoSchema=new mongoose.Schema({         //need to add notes and likes
         type:String
     },recomended:{
         type:Boolean
-    }
+    },likes:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'like'
+    }],notes:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'note'
+    }]
 
 },{
     timestamps:true

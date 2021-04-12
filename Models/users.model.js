@@ -17,6 +17,12 @@ const userSchema=new mongoose.Schema({
     }],history:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:'video'
+    }],likes:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'like'
+    }],notes:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'note'
     }]
 },{timestamps:true})
 

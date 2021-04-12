@@ -1,5 +1,7 @@
 const videosdb=require('../Models/videos.model')
 const usersdb=require('../Models/users.model');
+const likesdb=require('../Models/likes.model')
+const notesdb=require('../Models/notes.model');
 
 module.exports.sendAllVideos=async (req,res)=>{
     const data=await videosdb.find();
@@ -78,4 +80,18 @@ module.exports.getUserHistory=async (req,res)=>{
         message:"Bad user id"
     })
     
+}
+
+module.exports.addLikes=async (req,res)=>{
+    const {videoid,id}=req.body;
+    const video=await videosdb.findById(videoid)
+    await video.likes.push(id)
+    video.save();
+
+    res.send("Under construction");
+}
+
+module.exports.addNotes=async (req,res)=>{
+
+    res.send("Under construction");
 }

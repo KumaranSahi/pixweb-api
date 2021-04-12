@@ -1,29 +1,23 @@
 const playlistsdb=require('../Models/playlists.model');
 const usersdb=require('../Models/users.model')
-const videosdb=require('../Models/videos.model')
 
 module.exports.sendAllPlaylists=async (req,res)=>{
     const {id}=req.params
-    if(await usersdb.findById(id)){
+    try{
         const {playlists}=await (await usersdb.findById(id)).execPopulate({path:'playlists',populate:({path:'videos'})});
         const newPlaylists=playlists.filter(({active})=>active)
-        if(playlists){
-            return res.status(200).json({
-                ok:true,
-                data:newPlaylists,
-                message:"Full playlist list sent successfully"
-            })
-        }else{
-            return res.status(404).json({
-                ok:false,
-                message:"Data not found"
-            })
-        }
+        return res.status(200).json({
+            ok:true,
+            data:newPlaylists,
+            message:"Full playlist list sent successfully"
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(404).json({
+            ok:false,
+            message:"Data not found"
+        })
     }
-    return res.status(404).json({
-        ok:false,
-        message:"User not found"
-    })
 }
 
 module.exports.addNewPlaylist=async (req,res)=>{
@@ -60,77 +54,60 @@ module.exports.addNewPlaylist=async (req,res)=>{
 
 module.exports.addVideoToPlaylist=async (req,res)=>{
     const {playlistid,videoid}=req.params;
-    if(await playlistsdb.findById(playlistid)&&await videosdb.findById(videoid))
-    {
+    try{
         const playlist=await playlistsdb.findById(playlistid);
-        playlist.videos.push(videoid);
-        playlist.save();
-        if(playlist){
-            return res.status(201).json({
-                ok:true,
-                data:playlist,
-                message:"Full playlist updated successfully"
-            })
-        }else{
-            return res.status(503).json({
-                ok:false,
-                message:"internal error please try again later"
-            })
+        if(!playlist.videos.includes(videoid)){
+            playlist.videos.push(videoid);
+            playlist.save();
         }
+        return res.status(201).json({
+            ok:true,
+            data:playlist,
+            message:"Full playlist updated successfully"
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(503).json({
+            ok:false,
+            message:"internal error please try again later"
+        })
     }
-    return res.status(400).json({
-        ok:false,
-        message:"Bad video or playlist id"
-    })
 }
 
 module.exports.removeVideoFromPlaylist=async (req,res)=>{
     const {playlistid,videoid}=req.params;
-    if(await playlistsdb.findById(playlistid)&&await videosdb.findById(videoid))
-    {
-        const playlist=await playlistsdb.findByIdAndUpdate(playlistid,{$pull:{videos:videoid}});
+    try{
+        await playlistsdb.findByIdAndUpdate(playlistid,{$pull:{videos:videoid}});
         const newPlaylist=await playlistsdb.findById(playlistid)
-        if(playlist){
-            return res.status(201).json({
-                ok:true,
-                data:newPlaylist,
-                message:"video removed successfully"
-            })
-        }else{
-            return res.status(503).json({
-                ok:false,
-                message:"internal error please try again later"
-            })
-        }
+        return res.status(201).json({
+            ok:true,
+            data:newPlaylist,
+            message:"video removed successfully"
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(503).json({
+            ok:false,
+            message:"internal error please try again later"
+        })
     }
-    return res.status(400).json({
-        ok:false,
-        message:"Bad video or playlist id"
-    })
 }
 
 module.exports.deletePlaylist=async (req,res)=>{
     const {playlistid}=req.params;
-    const playlist=await playlistsdb.findById(playlistid)
-    if(playlist)
-    {
+    try{
+        const playlist=await playlistsdb.findById(playlistid)
         const data=await playlist.update({active:false});
-        if(data){
-            return res.status(201).json({
-                ok:true,
-                data:data,
-                message:"playlist deleted successfully"
-            })
-        }else{
-            return res.status(503).json({
-                ok:false,
-                message:"internal error please try again later"
-            })
-        }
+        return res.status(201).json({
+            ok:true,
+            data:data,
+            message:"playlist deleted successfully"
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(503).json({
+            ok:false,
+            message:"internal error please try again later"
+        })
     }
-    return res.status(400).json({
-        ok:false,
-        message:"Bad playlist id"
-    })
-
 }
