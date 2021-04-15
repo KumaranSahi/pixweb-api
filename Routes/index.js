@@ -1,5 +1,6 @@
 const express=require('express')
 const router=express.Router();
+const passport=require('passport')
 
 //middlewares
 
@@ -22,27 +23,28 @@ router.get('/videos/:videoid',videoCheck,videosController.sendSelectedVideo)
 
 //User routes
 
-router.post('/users',userController.addUser)
-router.post('/users/:id/update-password',userCheck,userController.changePassword)
+router.post('/users/signin',userController.signinUser)
+router.post('/users/signup',userController.signupUser)
+router.post('/users/password',userController.changePassword)
 
 //Playlist routes
 
-router.get('/playlists/:id',userCheck,playlistController.sendAllPlaylists)
-router.post('/playlists/:id',userCheck,playlistController.addNewPlaylist)
-router.put('/playlists/:playlistid/video/:videoid',playlistCheck,videoCheck,playlistController.addVideoToPlaylist)
-router.delete('/playlists/:playlistid/video/:videoid',playlistCheck,videoCheck,playlistController.removeVideoFromPlaylist)
-router.delete('/playlists/:playlistid',playlistCheck,playlistController.deletePlaylist)
+router.get('/playlists/:id',passport.authenticate('jwt',{session:false}),userCheck,playlistController.sendAllPlaylists)
+router.post('/playlists/:id',passport.authenticate('jwt',{session:false}),userCheck,playlistController.addNewPlaylist)
+router.put('/playlists/:playlistid/video/:videoid',passport.authenticate('jwt',{session:false}),playlistCheck,videoCheck,playlistController.addVideoToPlaylist)
+router.delete('/playlists/:playlistid/video/:videoid',passport.authenticate('jwt',{session:false}),playlistCheck,videoCheck,playlistController.removeVideoFromPlaylist)
+router.delete('/playlists/:playlistid',passport.authenticate('jwt',{session:false}),playlistCheck,playlistController.deletePlaylist)
 
 //History routes
 
-router.get('/histories/:id',userCheck,videosController.getUserHistory)
-router.put('/histories/:videoid/users/:id',userCheck,videoCheck,videosController.addToHistory)
+router.get('/histories/:id',passport.authenticate('jwt',{session:false}),userCheck,videosController.getUserHistory)
+router.put('/histories/:videoid/users/:id',passport.authenticate('jwt',{session:false}),userCheck,videoCheck,videosController.addToHistory)
 
 //likes and notes routes
 
-router.put('/likes/:videoid/users/:id',userCheck,videoCheck,videosController.addLikes)
-router.delete('/likes/:likeid',likeCheck,videosController.removeLike)
-router.post('/notes/:videoid/users/:id',userCheck,videoCheck,videosController.addNotes)
-router.delete('/notes/:noteid',noteCheck,videosController.removeNote)
+router.put('/likes/:videoid/users/:id',passport.authenticate('jwt',{session:false}),userCheck,videoCheck,videosController.addLikes)
+router.delete('/likes/:likeid',passport.authenticate('jwt',{session:false}),likeCheck,videosController.removeLike)
+router.post('/notes/:videoid/users/:id',passport.authenticate('jwt',{session:false}),userCheck,videoCheck,videosController.addNotes)
+router.delete('/notes/:noteid',passport.authenticate('jwt',{session:false}),noteCheck,videosController.removeNote)
 
 module.exports=router;

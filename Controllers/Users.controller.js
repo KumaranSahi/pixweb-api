@@ -1,10 +1,11 @@
 const usersdb=require('../Models/users.model');
+const jwt=require('jsonwebtoken');
 
-module.exports.addUser=async (req,res)=>{
+module.exports.signupUser=async (req,res)=>{
     const {name,email,password}=req.body;
     let data=null;
     if(await usersdb.findOne({email:email})){
-        return res.status(409).json({
+        return res.status(208).json({
             ok:false,
             message:"User Already exists in the system"
         })
@@ -36,17 +37,43 @@ module.exports.addUser=async (req,res)=>{
 }
 
 module.exports.changePassword=async (req,res)=>{
-    const {id}=req.params;
-    const {password,confirmPassword}=req.body;
+    const {email,password,confirmPassword}=req.body;
     if(!(password)||!(confirmPassword)||(password!==confirmPassword)){
         return res.status(405).json({
             ok:false,
             message:"Passwords are invalid"
         })
     }
-    await usersdb.findById(id).update({password:password});
+    await usersdb.findOne({email:email}).update({password:password});
     return res.status(200).json({
         ok:true,
         message:"Password Updated Successfully"
     })
+}
+
+module.exports.signinUser=async (req,res)=>{
+    const {email,password}=req.body;
+    try{
+        const user=await usersdb.findOne({email:email})
+        if (!user || user.password !== password){
+            return res.status(401).json({
+                ok:false,
+                message: "Invalid username or password",
+            });
+        }
+        return res.status(200).json({
+            message: 'Sign in successful, here is your token, please keep it safe!',
+            data:  {
+                token: jwt.sign(user.toJSON(),"jIEYNh74F0GDowjLeaUfTckuOti2UgjU", {expiresIn:  '60m'}),
+                userId:user.id,
+                name:user.name
+            }
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(503).json({
+            ok:false,
+            message:"Internal server error"
+        })
+    }
 }
