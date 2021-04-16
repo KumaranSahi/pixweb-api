@@ -23,7 +23,7 @@ module.exports.sendAllVideos=async (req,res)=>{
 module.exports.sendSelectedVideo=async (req,res)=>{
     const {videoid}=req.params;
     try{
-        const data=await(await(await videosdb.findById(videoid)).execPopulate('likes')).execPopulate('notes');
+        const data=await(await(await videosdb.findById(videoid)).execPopulate('likes')).execPopulate({path:'notes',populate:({path:'by'})});
         return res.status(200).json({
             ok:true,
             data:data,
