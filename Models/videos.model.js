@@ -3,8 +3,7 @@ const mongoose=require('mongoose');
 const videoSchema=new mongoose.Schema({         //need to add notes and likes
     name:{
         type:String,
-        required:true,
-        unique:true
+        required:true
     },link:{
         type:String,
         required:true,

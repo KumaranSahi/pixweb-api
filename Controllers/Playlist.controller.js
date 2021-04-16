@@ -60,9 +60,10 @@ module.exports.addVideoToPlaylist=async (req,res)=>{
             playlist.videos.push(videoid);
             playlist.save();
         }
+        let populatedPlaylist=await playlist.execPopulate('videos')
         return res.status(201).json({
             ok:true,
-            data:playlist,
+            data:populatedPlaylist,
             message:"Full playlist updated successfully"
         })
     }catch(error){
@@ -94,13 +95,15 @@ module.exports.removeVideoFromPlaylist=async (req,res)=>{
 }
 
 module.exports.deletePlaylist=async (req,res)=>{
-    const {playlistid}=req.params;
+    const {playlistid,id}=req.params;
     try{
         const playlist=await playlistsdb.findById(playlistid)
-        const data=await playlist.update({active:false});
+        const data=await playlist.updateOne({active:false});
+        const {playlists}=await (await usersdb.findById(id)).execPopulate({path:'playlists',populate:({path:'videos'})});
+        const newPlaylists=playlists.filter(({active})=>active)
         return res.status(201).json({
             ok:true,
-            data:data,
+            data:newPlaylists,
             message:"playlist deleted successfully"
         })
     }catch(error){

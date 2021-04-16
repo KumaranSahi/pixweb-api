@@ -33,7 +33,7 @@ router.get('/playlists/:id',passport.authenticate('jwt',{session:false}),userChe
 router.post('/playlists/:id',passport.authenticate('jwt',{session:false}),userCheck,playlistController.addNewPlaylist)
 router.put('/playlists/:playlistid/video/:videoid',passport.authenticate('jwt',{session:false}),playlistCheck,videoCheck,playlistController.addVideoToPlaylist)
 router.delete('/playlists/:playlistid/video/:videoid',passport.authenticate('jwt',{session:false}),playlistCheck,videoCheck,playlistController.removeVideoFromPlaylist)
-router.delete('/playlists/:playlistid',passport.authenticate('jwt',{session:false}),playlistCheck,playlistController.deletePlaylist)
+router.delete('/playlists/:playlistid/users/:id',passport.authenticate('jwt',{session:false}),playlistCheck,playlistController.deletePlaylist)
 
 //History routes
 

@@ -4,6 +4,7 @@ const jwt=require('jsonwebtoken');
 module.exports.signupUser=async (req,res)=>{
     const {name,email,password}=req.body;
     let data=null;
+    try{
     if(await usersdb.findOne({email:email})){
         return res.status(208).json({
             ok:false,
@@ -28,7 +29,9 @@ module.exports.signupUser=async (req,res)=>{
             ok:true,
             message:"User Added Successfully"
         })
-    }else{
+    }    
+    }catch(error){
+        console.log(error)
         return res.status(503).json({
             ok:false,
             message:"Internal error please try again later"
@@ -64,9 +67,10 @@ module.exports.signinUser=async (req,res)=>{
         return res.status(200).json({
             message: 'Sign in successful, here is your token, please keep it safe!',
             data:  {
+                ok:true,
                 token: jwt.sign(user.toJSON(),"jIEYNh74F0GDowjLeaUfTckuOti2UgjU", {expiresIn:  '60m'}),
                 userId:user.id,
-                name:user.name
+                userName:user.name
             }
         })
     }catch(error){

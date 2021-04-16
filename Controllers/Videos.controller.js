@@ -42,11 +42,14 @@ module.exports.addToHistory=async (req,res)=>{
     const {videoid,id}=req.params;
     try{
         const user=await usersdb.findById(id);
-        if(!user.history.includes(videoid))
-            await user.history.push(videoid)
-        user.save();
+        if(!user.histories.includes(videoid)){
+            await user.histories.push(videoid)
+            user.save();
+        }
+        const {histories}=await (await usersdb.findById(id)).execPopulate('histories')
         return res.status(201).json({
             ok:true,
+            data:histories,
             message:"Video added to history"
         })
     }catch(error){
@@ -62,10 +65,10 @@ module.exports.getUserHistory=async (req,res)=>{
     const {id}=req.params
     try{
         const user=await usersdb.findById(id);
-        const {history}=await user.execPopulate('history')
+        const {histories}=await user.execPopulate('histories')
         return res.status(200).json({
             ok:true,
-            data:history,
+            data:histories,
             message:"History sent successfully"
         })
     }catch(error){
