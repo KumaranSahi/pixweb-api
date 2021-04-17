@@ -1,6 +1,6 @@
 const mongoose=require('mongoose')
 
-mongoose.connect('mongodb://localhost/pixweb', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb+srv://Kumaran:p2ByFG4p4yY4XChv@pix-ecosystem.kzgz3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
 
 const db=mongoose.connection;
 
