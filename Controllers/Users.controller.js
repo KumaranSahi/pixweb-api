@@ -47,11 +47,19 @@ module.exports.changePassword=async (req,res)=>{
             message:"Passwords are invalid"
         })
     }
-    await usersdb.findOne({email:email}).update({password:password});
-    return res.status(200).json({
-        ok:true,
-        message:"Password Updated Successfully"
-    })
+    const user=await usersdb.findOne({email:email});
+    if(user){
+        await user.update({password:password});
+        return res.status(200).json({
+            ok:true,
+            message:"Password Updated Successfully"
+        })
+    }else{
+        return res.status(404).json({
+            ok:false,
+            message:"invalid Email ID"
+        })
+    }
 }
 
 module.exports.signinUser=async (req,res)=>{

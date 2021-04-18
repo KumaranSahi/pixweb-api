@@ -14,4 +14,10 @@ const passportJWT=require('./Config/Passport')
 
 app.use("/api",router)
 
+app.use("/",(req,res)=>{
+    return res.status(404).json({
+        data:"Requested data doesn't exist"
+    })
+})
+
 app.listen(process.env.PORT ||PORT,()=>console.log("Server running on port "+PORT))
