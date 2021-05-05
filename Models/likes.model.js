@@ -1,16 +1,16 @@
-const mongoose =require('mongoose');
+const {Schema,model} =require('mongoose');
 
-const likeSchema=new mongoose.Schema({
+const likeSchema=new Schema({
     by:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'user'
     },video:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'video'
     }
 },{
     timestamps:true
 })
 
-const like=mongoose.model("like",likeSchema);
+const like=model("like",likeSchema);
 module.exports=like;

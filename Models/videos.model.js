@@ -1,6 +1,6 @@
-const mongoose=require('mongoose');
+const {Schema,model}=require('mongoose');
 
-const videoSchema=new mongoose.Schema({         //need to add notes and likes
+const videoSchema=new Schema({
     name:{
         type:String,
         required:true
@@ -22,10 +22,10 @@ const videoSchema=new mongoose.Schema({         //need to add notes and likes
     },recomended:{
         type:Boolean
     },likes:[{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'like'
     }],notes:[{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'note'
     }]
 
@@ -33,5 +33,5 @@ const videoSchema=new mongoose.Schema({         //need to add notes and likes
     timestamps:true
 })
 
-const video=mongoose.model("video",videoSchema);
+const video=model("video",videoSchema);
 module.exports=video;

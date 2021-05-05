@@ -1,14 +1,14 @@
-const mongoose=require('mongoose');
+const {Schema,model}=require('mongoose');
 
-const playlistSchema=new mongoose.Schema({
+const playlistSchema=new Schema({
     name:{
         type:String,
         required:true,
     },videos:[{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:('video')
     }],by:{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:('user'),
         required:true
     },active:{
@@ -17,5 +17,5 @@ const playlistSchema=new mongoose.Schema({
     }
 },{timestamps:true})
 
-const playlist=mongoose.model('playlist',playlistSchema)
+const playlist=model('playlist',playlistSchema)
 module.exports=playlist;
