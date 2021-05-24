@@ -1,6 +1,6 @@
-const mongoose=require('mongoose');
+const {Schema,model}=require('mongoose');
 
-const userSchema=new mongoose.Schema({
+const userSchema=new Schema({
     name:{
         type:String,
         required:true
@@ -12,19 +12,19 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },playlists:[{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'playlist'
     }],histories:[{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'video'
     }],likes:[{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'like'
     }],notes:[{
-        type:mongoose.Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:'note'
     }]
 },{timestamps:true})
 
-const user=mongoose.model("user",userSchema);
+const user=model("user",userSchema);
 module.exports=user;

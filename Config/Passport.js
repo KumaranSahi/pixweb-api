@@ -11,12 +11,12 @@ const opts={
 passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
     usersdb.findById(jwt_payload._id, function(err, user) {
         if (err) {
-            return done(err, false);    //error
+            return done(err, false);
         }
         if (user) {
-            return done(null, user);    //success
+            return done(null, user);
         } else {
-            return done(null, false);   //user not found
+            return done(null, false);
         }
     });
 }));
