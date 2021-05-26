@@ -1,11 +1,11 @@
-const videosdb = require("../Models/videos.model");
-const usersdb = require("../Models/users.model");
-const likesdb = require("../Models/likes.model");
-const notesdb = require("../Models/notes.model");
+const Video = require("../Models/videos.model");
+const User = require("../Models/users.model");
+const Like = require("../Models/likes.model");
+const Note = require("../Models/notes.model");
 
-module.exports.sendAllVideos = async (req, res) => {
+const sendAllVideos = async (req, res) => {
   try {
-    const data = await videosdb.find();
+    const data = await Video.find();
     return res.status(200).json({
       ok: true,
       data: data,
@@ -13,18 +13,18 @@ module.exports.sendAllVideos = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to load videos please try again later",
     });
   }
 };
 
-module.exports.sendSelectedVideo = async (req, res) => {
-  const { videoid } = req.params;
+const sendSelectedVideo = async (req, res) => {
+  const video = req.video;
   try {
     const data = await (
-      await (await videosdb.findById(videoid)).execPopulate("likes")
+      await video.execPopulate("likes")
     ).execPopulate({ path: "notes", populate: { path: "by" } });
     return res.status(200).json({
       ok: true,
@@ -33,23 +33,23 @@ module.exports.sendSelectedVideo = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to load selected video please try again later",
     });
   }
 };
 
-module.exports.addToHistory = async (req, res) => {
-  const { videoid, id } = req.params;
+const addToHistory = async (req, res) => {
+  const { videoid } = req.params;
+  const user = req.user;
   try {
-    const user = await usersdb.findById(id);
     if (!user.histories.includes(videoid)) {
       await user.histories.push(videoid);
       user.save();
     }
     const { histories } = await (
-      await usersdb.findById(id)
+      await User.findById(user._id)
     ).execPopulate("histories");
     return res.status(201).json({
       ok: true,
@@ -58,17 +58,16 @@ module.exports.addToHistory = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to add video to history please try again later",
     });
   }
 };
 
-module.exports.getUserHistory = async (req, res) => {
-  const { id } = req.params;
+const getUserHistory = async (req, res) => {
+  const user = req.user;
   try {
-    const user = await usersdb.findById(id);
     const { histories } = await user.execPopulate("histories");
     return res.status(200).json({
       ok: true,
@@ -77,24 +76,23 @@ module.exports.getUserHistory = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to load histories please try again later",
     });
   }
 };
 
-module.exports.addLikes = async (req, res) => {
-  const { videoid, id } = req.params;
+const addLikes = async (req, res) => {
+  const video=req.video;
+  const user = req.user;
   try {
-    const like = await likesdb.create({
-      by: id,
+    const like = await Like.create({
+      by: user._id,
       video: videoid,
     });
-    const video = await videosdb.findById(videoid);
     await video.likes.push(like.id);
     video.save();
-    const user = await usersdb.findById(id);
     await user.likes.push(like.id);
     user.save();
     return res.status(201).json({
@@ -103,19 +101,18 @@ module.exports.addLikes = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to add likes please try again later",
     });
   }
 };
 
-module.exports.removeLike = async (req, res) => {
-  const { likeid } = req.params;
+const removeLike = async (req, res) => {
+  const like=req.like;
   try {
-    const like = await likesdb.findById(likeid);
-    await videosdb.findByIdAndUpdate(like.video, { $pull: { likes: likeid } });
-    await usersdb.findByIdAndUpdate(like.by, { $pull: { likes: likeid } });
+    await Video.findByIdAndUpdate(like.video, { $pull: { likes: likeid } });
+    await User.findByIdAndUpdate(like.by, { $pull: { likes: likeid } });
     await like.delete();
     return res.status(200).json({
       ok: true,
@@ -123,26 +120,25 @@ module.exports.removeLike = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to remove like please try again later",
     });
   }
 };
 
-module.exports.addNotes = async (req, res) => {
-  const { videoid, id } = req.params;
+const addNotes = async (req, res) => {
+  const video=req.video;
+  const user=req.user;
   const { note: content } = req.body;
   try {
-    const note = await notesdb.create({
+    const note = await Note.create({
       content: content,
-      by: id,
-      video: videoid,
+      by: user._id,
+      video: video._id,
     });
-    const video = await videosdb.findById(videoid);
     await video.notes.push(note.id);
     video.save();
-    const user = await usersdb.findById(id);
     await user.notes.push(note.id);
     user.save();
     return res.status(200).json({
@@ -151,19 +147,18 @@ module.exports.addNotes = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to add notes please try again later",
     });
   }
 };
 
-module.exports.removeNote = async (req, res) => {
-  const { noteid } = req.params;
+const removeNote = async (req, res) => {
+  const note=req.note;
   try {
-    const note = await notesdb.findById(noteid);
-    await videosdb.findByIdAndUpdate(note.video, { $pull: { notes: noteid } });
-    await usersdb.findByIdAndUpdate(note.by, { $pull: { notes: noteid } });
+    await Video.findByIdAndUpdate(note.video, { $pull: { notes: note._id } });
+    await User.findByIdAndUpdate(note.by, { $pull: { notes: note._id } });
     await note.delete();
     return res.status(200).json({
       ok: true,
@@ -171,9 +166,20 @@ module.exports.removeNote = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to remove notes please try again later",
     });
   }
+};
+
+module.exports = {
+  sendAllVideos,
+  sendSelectedVideo,
+  addToHistory,
+  getUserHistory,
+  addLikes,
+  removeLike,
+  addNotes,
+  removeNote,
 };
