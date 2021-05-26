@@ -1,6 +1,7 @@
 const usersdb = require("../Models/users.model");
 const jwt = require("jsonwebtoken");
 const { emailIdCheck, hashingPasswords,confirmPasswordCheck } = require("../Utils/userUtils");
+const bcrypt = require("bcrypt");
 
 module.exports.signupUser = async (req, res) => {
   const { name, email, password } = req.body;
@@ -18,7 +19,7 @@ module.exports.signupUser = async (req, res) => {
         message: "User Already exists in the system",
       });
     }
-    const newPassword = await hashingPasswords(password, salt);
+    const newPassword = await hashingPasswords(password);
     data = await usersdb.create({
       name: name,
       email: email,
@@ -42,7 +43,7 @@ module.exports.signupUser = async (req, res) => {
 module.exports.changePassword = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
   try {
-    if (confirmPasswordCheck(password,confirmPasswordCheck)) {
+    if (confirmPasswordCheck(password, confirmPassword)) {
       return res.status(405).json({
         ok: false,
         message: "Passwords are invalid",
@@ -50,7 +51,7 @@ module.exports.changePassword = async (req, res) => {
     }
     const user = await usersdb.findOne({ email: email });
     if (user) {
-      const newPassword = await hashingPasswords(password, salt);
+      const newPassword = await hashingPasswords(password);
       await user.update({ password: newPassword });
       return res.status(200).json({
         ok: true,
