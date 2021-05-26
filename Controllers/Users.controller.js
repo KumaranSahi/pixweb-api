@@ -1,6 +1,10 @@
 const usersdb = require("../Models/users.model");
 const jwt = require("jsonwebtoken");
-const { emailIdCheck, hashingPasswords,confirmPasswordCheck } = require("../Utils/userUtils");
+const {
+  emailIdCheck,
+  hashingPasswords,
+  confirmPasswordCheck,
+} = require("../Utils/userUtils");
 const bcrypt = require("bcrypt");
 
 module.exports.signupUser = async (req, res) => {
