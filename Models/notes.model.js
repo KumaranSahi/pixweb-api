@@ -8,11 +8,11 @@ const noteSchema = new Schema(
     },
     by: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
     },
     video: {
       type: Schema.Types.ObjectId,
-      ref: "video",
+      ref: "Video",
     },
   },
   {
@@ -20,5 +20,5 @@ const noteSchema = new Schema(
   }
 );
 
-const note = model("note", noteSchema);
-module.exports = note;
+const Note = model("Note", noteSchema);
+module.exports = Note;

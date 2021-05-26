@@ -4,11 +4,11 @@ const likeSchema = new Schema(
   {
     by: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
     },
     video: {
       type: Schema.Types.ObjectId,
-      ref: "video",
+      ref: "Video",
     },
   },
   {
@@ -16,5 +16,5 @@ const likeSchema = new Schema(
   }
 );
 
-const like = model("like", likeSchema);
-module.exports = like;
+const Like = model("Like", likeSchema);
+module.exports = Like;
