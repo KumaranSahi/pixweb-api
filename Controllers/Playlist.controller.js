@@ -99,17 +99,10 @@ const removeVideoFromPlaylist = async (req, res) => {
 
 const deletePlaylist = async (req, res) => {
   const playlist = req.playlist;
-  const user = req.user;
   try {
     await playlist.updateOne({ active: false });
-    const { playlists } = await user.execPopulate({
-      path: "playlists",
-      populate: { path: "videos" },
-    });
-    const newPlaylists = playlists.filter(({ active }) => active);
     return res.status(201).json({
       ok: true,
-      data: newPlaylists,
       message: "playlist deleted successfully",
     });
   } catch (error) {

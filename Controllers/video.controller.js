@@ -48,12 +48,8 @@ const addToHistory = async (req, res) => {
       await user.histories.push(videoid);
       user.save();
     }
-    const { histories } = await (
-      await User.findById(user._id)
-    ).execPopulate("histories");
     return res.status(201).json({
       ok: true,
-      data: histories,
       message: "Video added to history",
     });
   } catch (error) {
@@ -84,12 +80,12 @@ const getUserHistory = async (req, res) => {
 };
 
 const addLikes = async (req, res) => {
-  const video=req.video;
+  const video = req.video;
   const user = req.user;
   try {
     const like = await Like.create({
       by: user._id,
-      video: videoid,
+      video: video._id,
     });
     await video.likes.push(like.id);
     video.save();
@@ -97,6 +93,7 @@ const addLikes = async (req, res) => {
     user.save();
     return res.status(201).json({
       ok: true,
+      data: like,
       message: "Like added successfully",
     });
   } catch (error) {
@@ -109,10 +106,10 @@ const addLikes = async (req, res) => {
 };
 
 const removeLike = async (req, res) => {
-  const like=req.like;
+  const like = req.like;
   try {
-    await Video.findByIdAndUpdate(like.video, { $pull: { likes: likeid } });
-    await User.findByIdAndUpdate(like.by, { $pull: { likes: likeid } });
+    await Video.findByIdAndUpdate(like.video, { $pull: { likes: like._id } });
+    await User.findByIdAndUpdate(like.by, { $pull: { likes: like._id } });
     await like.delete();
     return res.status(200).json({
       ok: true,
@@ -128,8 +125,8 @@ const removeLike = async (req, res) => {
 };
 
 const addNotes = async (req, res) => {
-  const video=req.video;
-  const user=req.user;
+  const video = req.video;
+  const user = req.user;
   const { note: content } = req.body;
   try {
     const note = await Note.create({
@@ -143,6 +140,7 @@ const addNotes = async (req, res) => {
     user.save();
     return res.status(200).json({
       ok: true,
+      data:note,
       message: "Note added successfully",
     });
   } catch (error) {
@@ -155,7 +153,7 @@ const addNotes = async (req, res) => {
 };
 
 const removeNote = async (req, res) => {
-  const note=req.note;
+  const note = req.note;
   try {
     await Video.findByIdAndUpdate(note.video, { $pull: { notes: note._id } });
     await User.findByIdAndUpdate(note.by, { $pull: { notes: note._id } });

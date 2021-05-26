@@ -7,12 +7,17 @@ const videoCheck = async (req, res, next) => {
     if (video) {
       req.video = video;
       next();
+    }else{
+      return res.status(404).json({
+        ok: false,
+        message: "Data not found",
+      });
     }
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to load data",
     });
   }
 };

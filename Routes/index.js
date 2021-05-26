@@ -53,7 +53,7 @@ router.delete(
   playlistController.removeVideoFromPlaylist
 );
 router.delete(
-  "/playlists/:playlistid/users",
+  "/playlists/:playlistid",
   passport.authenticate("jwt", { session: false }),
   playlistCheck,
   playlistController.deletePlaylist
@@ -62,12 +62,12 @@ router.delete(
 //History routes
 
 router.get(
-  "/histories/:id",
+  "/histories",
   passport.authenticate("jwt", { session: false }),
   videosController.getUserHistory
 );
 router.put(
-  "/histories/:videoid/users/:id",
+  "/histories/:videoid",
   passport.authenticate("jwt", { session: false }),
   videoCheck,
   videosController.addToHistory
@@ -76,7 +76,7 @@ router.put(
 //likes and notes routes
 
 router.put(
-  "/likes/:videoid/users/:id",
+  "/likes/:videoid",
   passport.authenticate("jwt", { session: false }),
   videoCheck,
   videosController.addLikes
@@ -88,7 +88,7 @@ router.delete(
   videosController.removeLike
 );
 router.post(
-  "/notes/:videoid/users/:id",
+  "/notes/:videoid",
   passport.authenticate("jwt", { session: false }),
   videoCheck,
   videosController.addNotes
