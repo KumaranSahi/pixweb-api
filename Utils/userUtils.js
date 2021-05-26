@@ -5,7 +5,6 @@ const emailIdCheck = (email) =>
 
 const hashingPasswords = async (password) => {
   const salt = await bcrypt.genSalt(8);
-  console.log(salt);
   return bcrypt.hashSync(password, salt);
 };
 
