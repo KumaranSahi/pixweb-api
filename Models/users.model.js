@@ -18,30 +18,30 @@ const userSchema = new Schema(
     playlists: [
       {
         type: Schema.Types.ObjectId,
-        ref: "playlist",
+        ref: "Playlist",
       },
     ],
     histories: [
       {
         type: Schema.Types.ObjectId,
-        ref: "video",
+        ref: "Video",
       },
     ],
     likes: [
       {
         type: Schema.Types.ObjectId,
-        ref: "like",
+        ref: "Like",
       },
     ],
     notes: [
       {
         type: Schema.Types.ObjectId,
-        ref: "note",
+        ref: "Note",
       },
     ],
   },
   { timestamps: true }
 );
 
-const user = model("user", userSchema);
-module.exports = user;
+const User = model("User", userSchema);
+module.exports = User;

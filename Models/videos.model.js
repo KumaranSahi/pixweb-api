@@ -32,13 +32,13 @@ const videoSchema = new Schema(
     likes: [
       {
         type: Schema.Types.ObjectId,
-        ref: "like",
+        ref: "Like",
       },
     ],
     notes: [
       {
         type: Schema.Types.ObjectId,
-        ref: "note",
+        ref: "Note",
       },
     ],
   },
@@ -47,5 +47,5 @@ const videoSchema = new Schema(
   }
 );
 
-const video = model("video", videoSchema);
+const video = model("Video", videoSchema);
 module.exports = video;

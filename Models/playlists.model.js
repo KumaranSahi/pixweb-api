@@ -9,12 +9,12 @@ const playlistSchema = new Schema(
     videos: [
       {
         type: Schema.Types.ObjectId,
-        ref: "video",
+        ref: "Video",
       },
     ],
     by: {
       type: Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       required: true,
     },
     active: {
@@ -25,5 +25,5 @@ const playlistSchema = new Schema(
   { timestamps: true }
 );
 
-const playlist = model("playlist", playlistSchema);
-module.exports = playlist;
+const Playlist = model("Playlist", playlistSchema);
+module.exports = Playlist;

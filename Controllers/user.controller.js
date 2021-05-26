@@ -1,4 +1,4 @@
-const usersdb = require("../Models/users.model");
+const User = require("../Models/users.model");
 const jwt = require("jsonwebtoken");
 const {
   emailIdCheck,
@@ -7,7 +7,7 @@ const {
 } = require("../Utils/userUtils");
 const bcrypt = require("bcrypt");
 
-module.exports.signupUser = async (req, res) => {
+const signupUser = async (req, res) => {
   const { name, email, password } = req.body;
   let data = null;
   if (!name && !email && !password && !emailIdCheck(email)) {
@@ -17,14 +17,14 @@ module.exports.signupUser = async (req, res) => {
     });
   }
   try {
-    if (await usersdb.findOne({ email: email })) {
+    if (await User.findOne({ email: email })) {
       return res.status(409).json({
         ok: false,
         message: "User Already exists in the system",
       });
     }
     const newPassword = await hashingPasswords(password);
-    data = await usersdb.create({
+    data = await User.create({
       name: name,
       email: email,
       password: newPassword,
@@ -39,12 +39,12 @@ module.exports.signupUser = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "Internal error please try again later",
+      message: "Unable to create new user please try again later",
     });
   }
 };
 
-module.exports.changePassword = async (req, res) => {
+const changePassword = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
   try {
     if (confirmPasswordCheck(password, confirmPassword)) {
@@ -53,7 +53,7 @@ module.exports.changePassword = async (req, res) => {
         message: "Passwords are invalid",
       });
     }
-    const user = await usersdb.findOne({ email: email });
+    const user = await User.findOne({ email: email });
     if (user) {
       const newPassword = await hashingPasswords(password);
       await user.update({ password: newPassword });
@@ -71,15 +71,15 @@ module.exports.changePassword = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "Internal error please try again later",
+      message: "Unable to update password please try again later",
     });
   }
 };
 
-module.exports.signinUser = async (req, res) => {
+const signinUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await usersdb.findOne({ email: email });
+    const user = await User.findOne({ email: email });
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({
         ok: false,
@@ -93,7 +93,6 @@ module.exports.signinUser = async (req, res) => {
         token: jwt.sign({ userId: user._id }, process.env["SECRET"], {
           expiresIn: "24h",
         }),
-        userId: user.id,
         userName: user.name,
       },
     });
@@ -101,7 +100,10 @@ module.exports.signinUser = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "Internal server error",
+      message: "Unable to signin user please try again later",
     });
   }
 };
+
+
+module.exports = { signupUser, changePassword, signinUser };
