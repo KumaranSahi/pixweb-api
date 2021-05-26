@@ -6,7 +6,6 @@ const passport = require("passport");
 
 const playlistCheck = require("../Middleware/playlistCheck");
 const videoCheck = require("../Middleware/videoCheck");
-const userCheck = require("../Middleware/userCheck");
 const likeCheck = require("../Middleware/likeCheck");
 const noteCheck = require("../Middleware/noteCheck");
 
@@ -30,15 +29,13 @@ router.post("/users/password", userController.changePassword);
 //Playlist routes
 
 router.get(
-  "/playlists/:id",
+  "/playlists",
   passport.authenticate("jwt", { session: false }),
-  userCheck,
   playlistController.sendAllPlaylists
 );
 router.post(
-  "/playlists/:id",
+  "/playlists",
   passport.authenticate("jwt", { session: false }),
-  userCheck,
   playlistController.addNewPlaylist
 );
 router.put(
@@ -56,7 +53,7 @@ router.delete(
   playlistController.removeVideoFromPlaylist
 );
 router.delete(
-  "/playlists/:playlistid/users/:id",
+  "/playlists/:playlistid/users",
   passport.authenticate("jwt", { session: false }),
   playlistCheck,
   playlistController.deletePlaylist
@@ -67,13 +64,11 @@ router.delete(
 router.get(
   "/histories/:id",
   passport.authenticate("jwt", { session: false }),
-  userCheck,
   videosController.getUserHistory
 );
 router.put(
   "/histories/:videoid/users/:id",
   passport.authenticate("jwt", { session: false }),
-  userCheck,
   videoCheck,
   videosController.addToHistory
 );
@@ -83,7 +78,6 @@ router.put(
 router.put(
   "/likes/:videoid/users/:id",
   passport.authenticate("jwt", { session: false }),
-  userCheck,
   videoCheck,
   videosController.addLikes
 );
@@ -96,7 +90,6 @@ router.delete(
 router.post(
   "/notes/:videoid/users/:id",
   passport.authenticate("jwt", { session: false }),
-  userCheck,
   videoCheck,
   videosController.addNotes
 );

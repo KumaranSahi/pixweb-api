@@ -3,7 +3,9 @@ const videosdb = require("../Models/videos.model");
 const videoCheck = async (req, res, next) => {
   const { videoid } = req.params;
   try {
-    if (await videosdb.findById(videoid)) {
+    const video=await videosdb.findById(videoid);
+    if (video) {
+      req.video=video
       next();
     }
   } catch (error) {

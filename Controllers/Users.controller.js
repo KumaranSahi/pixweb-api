@@ -7,7 +7,7 @@ const {
 } = require("../Utils/userUtils");
 const bcrypt = require("bcrypt");
 
-module.exports.signupUser = async (req, res) => {
+const signupUser = async (req, res) => {
   const { name, email, password } = req.body;
   let data = null;
   if (!name && !email && !password && !emailIdCheck(email)) {
@@ -39,12 +39,12 @@ module.exports.signupUser = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "Internal error please try again later",
+      message: "Unable to create new user please try again later",
     });
   }
 };
 
-module.exports.changePassword = async (req, res) => {
+const changePassword = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
   try {
     if (confirmPasswordCheck(password, confirmPassword)) {
@@ -71,12 +71,12 @@ module.exports.changePassword = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "Internal error please try again later",
+      message: "Unable to update password please try again later",
     });
   }
 };
 
-module.exports.signinUser = async (req, res) => {
+const signinUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await usersdb.findOne({ email: email });
@@ -101,7 +101,10 @@ module.exports.signinUser = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "Internal server error",
+      message: "Unable to signin user please try again later",
     });
   }
 };
+
+
+module.exports = { signupUser, changePassword, signinUser };

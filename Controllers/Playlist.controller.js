@@ -1,12 +1,12 @@
 const playlistsdb = require("../Models/playlists.model");
-const usersdb = require("../Models/users.model");
 
-module.exports.sendAllPlaylists = async (req, res) => {
-  const { id } = req.params;
+ const sendAllPlaylists = async (req, res) => {
+  const user = req.user;
   try {
-    const { playlists } = await (
-      await usersdb.findById(id)
-    ).execPopulate({ path: "playlists", populate: { path: "videos" } });
+    const { playlists } = await user.execPopulate({
+      path: "playlists",
+      populate: { path: "videos" },
+    });
     const newPlaylists = playlists.filter(({ active }) => active);
     return res.status(200).json({
       ok: true,
@@ -15,51 +15,50 @@ module.exports.sendAllPlaylists = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    return res.status(404).json({
+    return res.status(503).json({
       ok: false,
-      message: "Data not found",
+      message: "Unable to load Playlist list",
     });
   }
 };
 
-module.exports.addNewPlaylist = async (req, res) => {
+const addNewPlaylist = async (req, res) => {
   const { name } = req.body;
-  const { id } = req.params;
-  if (name) {
+  if (!name) {
+    return res.status(400).json({
+      ok: false,
+      message: "Invalid request",
+    });
+  }
+  const user = req.user;
+  try {
     const data = await playlistsdb.create({
       name: name,
-      by: id,
+      by: user._id,
       active: true,
     });
-    const userReference = await usersdb.findById(id);
-    await userReference.playlists.push(data.id);
-    userReference.save();
-    if (data) {
-      return res.status(201).json({
-        ok: true,
-        data: data,
-        message: "Playlist added successfully",
-      });
-    } else {
-      return res.status(503).json({
-        ok: false,
-        message: "Internal error please try again later",
-      });
-    }
+    await user.playlists.push(data._id);
+    user.save();
+    return res.status(201).json({
+      ok: true,
+      data: data,
+      message: "Playlist added successfully",
+    });
+  } catch (error) {
+    return res.status(503).json({
+      ok: false,
+      message: "Unable to add new playlist, please try again later",
+    });
   }
-  return res.status(400).json({
-    ok: false,
-    message: "Invalid request",
-  });
 };
 
-module.exports.addVideoToPlaylist = async (req, res) => {
-  const { playlistid, videoid } = req.params;
+const addVideoToPlaylist = async (req, res) => {
+  const playlist =req.playlist;
+  const { videoid } = req.params;
   try {
-    const playlist = await playlistsdb.findById(playlistid);
     if (!playlist.videos.includes(videoid)) {
       playlist.videos.push(videoid);
-      playlist.save();
+      await playlist.save();
     }
     let populatedPlaylist = await playlist.execPopulate("videos");
     return res.status(201).json({
@@ -71,15 +70,16 @@ module.exports.addVideoToPlaylist = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "internal error please try again later",
+      message: "Unable to update playlist please try again later",
     });
   }
 };
 
-module.exports.removeVideoFromPlaylist = async (req, res) => {
+const removeVideoFromPlaylist = async (req, res) => {
+  const playlist = req.playlist;
   const { playlistid, videoid } = req.params;
   try {
-    await playlistsdb.findByIdAndUpdate(playlistid, {
+    await playlist.update({
       $pull: { videos: videoid },
     });
     const newPlaylist = await playlistsdb.findById(playlistid);
@@ -97,14 +97,15 @@ module.exports.removeVideoFromPlaylist = async (req, res) => {
   }
 };
 
-module.exports.deletePlaylist = async (req, res) => {
-  const { playlistid, id } = req.params;
+const deletePlaylist = async (req, res) => {
+  const playlist = req.playlist;
+  const user = req.user;
   try {
-    const playlist = await playlistsdb.findById(playlistid);
-    const data = await playlist.updateOne({ active: false });
-    const { playlists } = await (
-      await usersdb.findById(id)
-    ).execPopulate({ path: "playlists", populate: { path: "videos" } });
+    await playlist.updateOne({ active: false });
+    const { playlists } = await user.execPopulate({
+      path: "playlists",
+      populate: { path: "videos" },
+    });
     const newPlaylists = playlists.filter(({ active }) => active);
     return res.status(201).json({
       ok: true,
@@ -115,7 +116,15 @@ module.exports.deletePlaylist = async (req, res) => {
     console.log(error);
     return res.status(503).json({
       ok: false,
-      message: "internal error please try again later",
+      message: "Unable to delete playlist please try again later",
     });
   }
+};
+
+module.exports = {
+  sendAllPlaylists,
+  addNewPlaylist,
+  addVideoToPlaylist,
+  removeVideoFromPlaylist,
+  deletePlaylist,
 };
