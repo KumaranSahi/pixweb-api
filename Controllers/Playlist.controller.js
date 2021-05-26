@@ -1,4 +1,4 @@
-const playlistsdb = require("../Models/playlists.model");
+const Playlist = require("../Models/playlists.model");
 
  const sendAllPlaylists = async (req, res) => {
   const user = req.user;
@@ -32,7 +32,7 @@ const addNewPlaylist = async (req, res) => {
   }
   const user = req.user;
   try {
-    const data = await playlistsdb.create({
+    const data = await Playlist.create({
       name: name,
       by: user._id,
       active: true,
@@ -82,7 +82,7 @@ const removeVideoFromPlaylist = async (req, res) => {
     await playlist.update({
       $pull: { videos: videoid },
     });
-    const newPlaylist = await playlistsdb.findById(playlistid);
+    const newPlaylist = await Playlist.findById(playlistid);
     return res.status(201).json({
       ok: true,
       data: newPlaylist,

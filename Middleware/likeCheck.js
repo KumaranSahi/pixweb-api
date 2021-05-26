@@ -1,9 +1,11 @@
-const likesdb = require("../Models/likes.model");
+const Like = require("../Models/likes.model");
 
 const likeCheck = async (req, res, next) => {
   const { likeid } = req.params;
   try {
-    if (await likesdb.findById(likeid)) {
+    const like = await Like.findById(likeid);
+    if (like) {
+      req.like=like;
       next();
     }
   } catch (error) {

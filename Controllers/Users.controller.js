@@ -1,4 +1,4 @@
-const usersdb = require("../Models/users.model");
+const User = require("../Models/users.model");
 const jwt = require("jsonwebtoken");
 const {
   emailIdCheck,
@@ -17,14 +17,14 @@ const signupUser = async (req, res) => {
     });
   }
   try {
-    if (await usersdb.findOne({ email: email })) {
+    if (await User.findOne({ email: email })) {
       return res.status(409).json({
         ok: false,
         message: "User Already exists in the system",
       });
     }
     const newPassword = await hashingPasswords(password);
-    data = await usersdb.create({
+    data = await User.create({
       name: name,
       email: email,
       password: newPassword,
@@ -53,7 +53,7 @@ const changePassword = async (req, res) => {
         message: "Passwords are invalid",
       });
     }
-    const user = await usersdb.findOne({ email: email });
+    const user = await User.findOne({ email: email });
     if (user) {
       const newPassword = await hashingPasswords(password);
       await user.update({ password: newPassword });
@@ -79,7 +79,7 @@ const changePassword = async (req, res) => {
 const signinUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await usersdb.findOne({ email: email });
+    const user = await User.findOne({ email: email });
     if (!user || !bcrypt.compareSync(password, user.password)) {
       return res.status(401).json({
         ok: false,
@@ -93,7 +93,6 @@ const signinUser = async (req, res) => {
         token: jwt.sign({ userId: user._id }, process.env["SECRET"], {
           expiresIn: "24h",
         }),
-        userId: user.id,
         userName: user.name,
       },
     });

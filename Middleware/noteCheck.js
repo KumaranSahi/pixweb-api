@@ -1,9 +1,11 @@
-const notesdb = require("../Models/notes.model");
+const Note = require("../Models/notes.model");
 
 const noteCheck = async (req, res, next) => {
   const { noteid } = req.params;
   try {
-    if (await notesdb.findById(noteid)) {
+    const note=await Note.findById(noteid)
+    if (note) {
+      req.note = note;
       next();
     }
   } catch (error) {
