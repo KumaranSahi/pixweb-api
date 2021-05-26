@@ -1,10 +1,16 @@
-const mongoose=require('mongoose')
+const mongoose = require("mongoose");
 
-mongoose.connect(process.env["DB_URI"], {useNewUrlParser: true, useUnifiedTopology: true});
-const db=mongoose.connection;
+mongoose.connect(process.env["DB_URI"], {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
 
-db.on('error', console.error.bind("Something went wrong with the Mongodb Server"));
+db.on(
+  "error",
+  console.error.bind("Something went wrong with the Mongodb Server")
+);
 
-db.once("open",()=>console.log("Connection extablished with database"))
+db.once("open", () => console.log("Connection extablished with database"));
 
-module.exports=db;
+module.exports = db;
