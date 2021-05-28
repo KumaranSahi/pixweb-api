@@ -140,7 +140,7 @@ const addNotes = async (req, res) => {
     user.save();
     return res.status(200).json({
       ok: true,
-      data:note,
+      data: note,
       message: "Note added successfully",
     });
   } catch (error) {

@@ -1,6 +1,6 @@
 const Playlist = require("../Models/playlists.model");
 
- const sendAllPlaylists = async (req, res) => {
+const sendAllPlaylists = async (req, res) => {
   const user = req.user;
   try {
     const { playlists } = await user.execPopulate({
@@ -53,7 +53,7 @@ const addNewPlaylist = async (req, res) => {
 };
 
 const addVideoToPlaylist = async (req, res) => {
-  const playlist =req.playlist;
+  const playlist = req.playlist;
   const { videoid } = req.params;
   try {
     if (!playlist.videos.includes(videoid)) {
