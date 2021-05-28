@@ -105,5 +105,4 @@ const signinUser = async (req, res) => {
   }
 };
 
-
 module.exports = { signupUser, changePassword, signinUser };
