@@ -1,10 +1,10 @@
-const User = require("../Models/users.model");
+const User = require("../models/users.model");
 const jwt = require("jsonwebtoken");
 const {
   emailIdCheck,
   hashingPasswords,
   confirmPasswordCheck,
-} = require("../Utils/userUtils");
+} = require("../utils/userUtils");
 const bcrypt = require("bcrypt");
 
 const signupUser = async (req, res) => {

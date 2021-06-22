@@ -1,16 +1,16 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const db = require("./Config/mongoose");
+const db = require("./config/mongoose");
 
-const router = require("./Routes");
+const router = require("./routes");
 
 const PORT = 8000;
 
 app.use(cors());
 app.use(express.json());
 
-const passportJWT = require("./Config/passport");
+const passportJWT = require("./config/passport");
 
 app.use("/api", router);
 

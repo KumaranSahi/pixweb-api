@@ -1,4 +1,4 @@
-const Video = require("../Models/videos.model");
+const Video = require("../models/videos.model");
 
 const videoCheck = async (req, res, next) => {
   const { videoid } = req.params;

@@ -1,4 +1,4 @@
-const Like = require("../Models/likes.model");
+const Like = require("../models/likes.model");
 
 const likeCheck = async (req, res, next) => {
   const { likeid } = req.params;
