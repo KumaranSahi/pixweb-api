@@ -1,4 +1,4 @@
-const Playlist = require("../Models/playlists.model");
+const Playlist = require("../models/playlists.model");
 
 const playlistCheck = async (req, res, next) => {
   const { playlistid } = req.params;
