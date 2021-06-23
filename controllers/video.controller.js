@@ -1,7 +1,4 @@
-const Video = require("../models/videos.model");
-const User = require("../models/users.model");
-const Like = require("../models/likes.model");
-const Note = require("../models/notes.model");
+const { Video, User, Like, Note } = require("../models");
 
 const sendAllVideos = async (req, res) => {
   try {

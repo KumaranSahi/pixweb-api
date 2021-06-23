@@ -4,16 +4,20 @@ const passport = require("passport");
 
 //middlewares
 
-const playlistCheck = require("../middleware/playlist.middleware");
-const videoCheck = require("../middleware/video.middleware");
-const likeCheck = require("../middleware/like.middleware");
-const noteCheck = require("../middleware/note.middleware");
+const {
+  likeCheck,
+  noteCheck,
+  playlistCheck,
+  videoCheck,
+} = require("../middleware");
 
 //controllers
 
-const videosController = require("../controllers/video.controller");
-const userController = require("../controllers/user.controller");
-const playlistController = require("../controllers/playlist.controller");
+const {
+  playlistController,
+  userController,
+  videosController,
+} = require("../controllers");
 
 // Video routes
 

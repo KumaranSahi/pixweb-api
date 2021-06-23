@@ -1,4 +1,4 @@
-const Playlist = require("../models/playlists.model");
+const { Playlist } = require("../models");
 
 const sendAllPlaylists = async (req, res) => {
   const user = req.user;
