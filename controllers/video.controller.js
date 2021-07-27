@@ -42,11 +42,14 @@ const addToHistory = async (req, res) => {
   const user = req.user;
   try {
     if (!user.histories.includes(videoid)) {
-      await user.histories.push(videoid);
-      user.save();
+      user.histories.push(videoid);
+      await user.save();
     }
+    const newUser = await User.findById(user._id);
+    const { histories } = await newUser.execPopulate("histories");
     return res.status(201).json({
       ok: true,
+      data: histories,
       message: "Video added to history",
     });
   } catch (error) {
@@ -84,10 +87,10 @@ const addLikes = async (req, res) => {
       by: user._id,
       video: video._id,
     });
-    await video.likes.push(like.id);
-    video.save();
-    await user.likes.push(like.id);
-    user.save();
+    video.likes.push(like.id);
+    await video.save();
+     user.likes.push(like.id);
+    await user.save();
     return res.status(201).json({
       ok: true,
       data: like,
@@ -131,10 +134,10 @@ const addNotes = async (req, res) => {
       by: user._id,
       video: video._id,
     });
-    await video.notes.push(note.id);
-    video.save();
-    await user.notes.push(note.id);
-    user.save();
+     video.notes.push(note.id);
+    await video.save();
+     user.notes.push(note.id);
+    await user.save();
     return res.status(200).json({
       ok: true,
       data: note,

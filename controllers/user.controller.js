@@ -32,6 +32,11 @@ const signupUser = async (req, res) => {
     if (data) {
       return res.status(201).json({
         ok: true,
+        token: jwt.sign({ userId: data._id }, process.env["SECRET"], {
+          expiresIn: "24h",
+        }),
+        userId: data._id,
+        userName: data.name,
         message: "User Added Successfully",
       });
     }

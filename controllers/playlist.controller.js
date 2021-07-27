@@ -37,8 +37,8 @@ const addNewPlaylist = async (req, res) => {
       by: user._id,
       active: true,
     });
-    await user.playlists.push(data._id);
-    user.save();
+    user.playlists.push(data._id);
+    await user.save();
     return res.status(201).json({
       ok: true,
       data: data,
