@@ -29,6 +29,7 @@ router.get("/videos/:videoid", videoCheck, videosController.sendSelectedVideo);
 router.post("/users/signin", userController.signinUser);
 router.post("/users/signup", userController.signupUser);
 router.post("/users/password", userController.changePassword);
+router.get("/users/guest-signin", userController.signinGuest);
 
 //Playlist routes
 

@@ -111,4 +111,26 @@ const signinUser = async (req, res) => {
   }
 };
 
-module.exports = { signupUser, changePassword, signinUser };
+const signinGuest = async (req, res) => {
+  try {
+    const user = await User.findById(process.env["GUEST_USER_ID"]);
+    return res.status(200).json({
+      message: "Sign in successful, here is your token, please keep it safe!",
+      data: {
+        ok: true,
+        token: jwt.sign({ userId: user._id }, process.env["SECRET"], {
+          expiresIn: "24h",
+        }),
+        userName: user.name,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(503).json({
+      ok: false,
+      message: "Unable to signin user please try again later",
+    });
+  }
+};
+
+module.exports = { signupUser, changePassword, signinUser, signinGuest };
